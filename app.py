@@ -416,6 +416,107 @@ div[data-testid="stSidebar"] * {
     color: #c7d2fe;
     font-size: 0.88rem;
 }
+
+/* ── NOVA FLOATING BOT ───────────────────────────────────────── */
+#nova-fab {
+    position: fixed; bottom: 28px; right: 28px; z-index: 9999;
+    width: 60px; height: 60px; border-radius: 50%;
+    background: linear-gradient(135deg, #a78bfa, #7c3aed);
+    border: none; cursor: pointer;
+    box-shadow: 0 4px 24px rgba(167,139,250,.5);
+    display: flex; align-items: center; justify-content: center;
+    transition: transform .2s, box-shadow .2s; font-size: 1.6rem;
+}
+#nova-fab:hover { transform: scale(1.1); box-shadow: 0 6px 32px rgba(167,139,250,.7); }
+#nova-pulse {
+    position: absolute; top: -3px; right: -3px;
+    width: 16px; height: 16px; background: #4ade80;
+    border-radius: 50%; border: 2px solid #0a0e1a;
+    animation: novapulse 2s infinite;
+}
+@keyframes novapulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.3);opacity:.7} }
+#nova-window {
+    position: fixed; bottom: 100px; right: 28px; z-index: 9998;
+    width: 360px; max-width: calc(100vw - 40px);
+    background: #0d1117; border: 1px solid #2d3748; border-radius: 16px;
+    box-shadow: 0 8px 40px rgba(0,0,0,.6);
+    display: none; flex-direction: column; overflow: hidden;
+}
+#nova-window.open { display: flex; }
+#nova-header {
+    background: linear-gradient(135deg,#1e2433,#161b2a);
+    padding: .9rem 1rem; display: flex; align-items: center;
+    justify-content: space-between; border-bottom: 1px solid #2d3748;
+}
+.nova-title { display: flex; align-items: center; gap: .6rem; }
+.nova-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: linear-gradient(135deg,#a78bfa,#7c3aed);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; flex-shrink: 0;
+}
+.nova-name { font-family: 'JetBrains Mono',monospace; font-weight:600; font-size:.92rem; color:#e2e8f0; }
+.nova-status { font-size:.72rem; color:#4ade80; margin-top:.1rem; }
+#nova-close { background:none; border:none; color:#64748b; font-size:1.2rem; cursor:pointer; padding:.2rem .4rem; border-radius:4px; line-height:1; }
+#nova-close:hover { color:#e2e8f0; background:#1e2433; }
+#nova-messages {
+    flex:1; overflow-y:auto; padding:1rem;
+    display:flex; flex-direction:column; gap:.8rem;
+    max-height:360px; min-height:180px;
+}
+#nova-messages::-webkit-scrollbar{width:4px}
+#nova-messages::-webkit-scrollbar-thumb{background:#2d3748;border-radius:2px}
+.nova-msg { display:flex; gap:.6rem; align-items:flex-start; }
+.nova-msg.user { flex-direction:row-reverse; }
+.nova-msg-avatar {
+    width:28px; height:28px; border-radius:50%;
+    background:linear-gradient(135deg,#a78bfa,#7c3aed);
+    display:flex; align-items:center; justify-content:center;
+    font-size:.8rem; flex-shrink:0;
+}
+.nova-msg.user .nova-msg-avatar { background:linear-gradient(135deg,#3b82f6,#1d4ed8); }
+.nova-bubble {
+    max-width:78%; background:#1a1f2e; border:1px solid #2d3748;
+    border-radius:12px; padding:.6rem .9rem;
+    font-size:.84rem; line-height:1.6; color:#cbd5e1;
+}
+.nova-msg.user .nova-bubble { background:#1e2d4a; border-color:#1e3a5f; color:#e2e8f0; }
+.nova-bubble code { background:#0d1117; border-radius:3px; padding:.1rem .3rem; font-family:'JetBrains Mono',monospace; font-size:.8rem; color:#4ade80; }
+.nova-bubble pre { background:#0d1117; border-radius:6px; padding:.6rem; overflow-x:auto; margin:.4rem 0; }
+.nova-bubble pre code { background:none; padding:0; color:#e2e8f0; }
+.nova-bubble strong { color:#e2e8f0; }
+.nova-bubble p { margin:.3rem 0; }
+.nova-bubble ul,.nova-bubble ol { padding-left:1.2rem; margin:.3rem 0; }
+.nova-typing { display:flex; align-items:center; gap:4px; padding:.4rem .6rem; }
+.nova-typing span { width:6px; height:6px; background:#a78bfa; border-radius:50%; animation:novatype 1.2s infinite; }
+.nova-typing span:nth-child(2){animation-delay:.2s}
+.nova-typing span:nth-child(3){animation-delay:.4s}
+@keyframes novatype{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-5px);opacity:1}}
+#nova-chips { padding:.5rem 1rem; display:flex; flex-wrap:wrap; gap:.4rem; border-top:1px solid #1e2433; }
+.nova-chip {
+    background:#1a1f2e; border:1px solid #2d3748; color:#94a3b8;
+    border-radius:20px; padding:.25rem .7rem; font-size:.73rem;
+    cursor:pointer; transition:all .15s; white-space:nowrap;
+    font-family:'JetBrains Mono',monospace;
+}
+.nova-chip:hover { background:#2d3748; color:#a78bfa; border-color:#a78bfa; }
+#nova-input-row { padding:.7rem 1rem; border-top:1px solid #2d3748; display:flex; gap:.5rem; align-items:flex-end; }
+#nova-input {
+    flex:1; background:#1e2433; border:1px solid #2d3748;
+    border-radius:8px; color:#e2e8f0; font-size:.85rem;
+    padding:.5rem .8rem; outline:none; resize:none;
+    max-height:100px; font-family:'Inter',sans-serif; line-height:1.5;
+}
+#nova-input:focus { border-color:#a78bfa; }
+#nova-send {
+    width:36px; height:36px;
+    background:linear-gradient(135deg,#a78bfa,#7c3aed);
+    border:none; border-radius:8px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1rem; flex-shrink:0; transition:all .2s; color:#fff;
+}
+#nova-send:hover { transform:scale(1.05); }
+#nova-send:disabled { opacity:.5; cursor:not-allowed; transform:none; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -429,6 +530,8 @@ if 'favorite_mode' not in st.session_state:
     st.session_state.favorite_mode = {}
 if 'generated_codes' not in st.session_state:
     st.session_state.generated_codes = []
+if 'nova_messages' not in st.session_state:
+    st.session_state.nova_messages = []
 
 
 def get_client():
@@ -545,6 +648,144 @@ with st.sidebar:
     st.markdown("**📜 History** — Past sessions")
     st.markdown('</div>', unsafe_allow_html=True)
 
+
+# ── NOVA FLOATING BOT ────────────────────────────────────────────────────────
+st.markdown(f"""
+<button id="nova-fab" onclick="toggleNova()" title="Chat with Nova">
+  🤖<span id="nova-pulse"></span>
+</button>
+
+<div id="nova-window">
+  <div id="nova-header">
+    <div class="nova-title">
+      <div class="nova-avatar">🤖</div>
+      <div>
+        <div class="nova-name">Nova</div>
+        <div class="nova-status">● Online — CodeMentor AI Assistant</div>
+      </div>
+    </div>
+    <button id="nova-close" onclick="toggleNova()">✕</button>
+  </div>
+  <div id="nova-messages"></div>
+  <div id="nova-chips">
+    <div class="nova-chip" onclick="novaQuick('What can you help me with?')">What can you do?</div>
+    <div class="nova-chip" onclick="novaQuick('How do I write a good commit message?')">Commit tips</div>
+    <div class="nova-chip" onclick="novaQuick('What are common beginner coding mistakes?')">Beginner tips</div>
+    <div class="nova-chip" onclick="novaQuick('Explain what an API is in simple terms')">What is an API?</div>
+    <div class="nova-chip" onclick="novaQuick('How do I read a stack trace?')">Stack trace help</div>
+  </div>
+  <div id="nova-input-row">
+    <textarea id="nova-input" rows="1" placeholder="Ask Nova anything..." onkeydown="novaKeydown(event)" oninput="autoResize(this)"></textarea>
+    <button id="nova-send" onclick="novaSend()">➤</button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+<script>
+const NOVA_API_KEY = '{GROQ_API_KEY}';
+const NOVA_SYSTEM = `You are Nova, a friendly and expert AI coding assistant embedded inside CodeMentor AI, a tool built by Neelima Pasala.
+You help developers and trainees with coding questions in any language, debugging, Git tips, career advice, explaining concepts simply, best practices, and anything related to software development.
+Personality: Warm, encouraging, practical. Use emojis occasionally. Give concise but complete answers. Use code blocks for code examples.
+Important: You are Nova — always refer to yourself as Nova. Keep responses under 200 words unless code is needed. Use markdown formatting.`;
+
+let novaOpen = false;
+let novaHistory = [];
+let novaTyping = false;
+let novaGreeted = false;
+
+function toggleNova(){{
+  novaOpen = !novaOpen;
+  const w = document.getElementById('nova-window');
+  w.classList.toggle('open', novaOpen);
+  if(novaOpen && !novaGreeted){{
+    novaGreeted = true;
+    appendNovaMsg('bot', `👋 Hey there! I'm **Nova**, your coding companion inside CodeMentor AI!\\n\\nI can help you with:\\n- 🐛 Debugging errors\\n- 💡 Explaining concepts\\n- 🌿 Git & version control\\n- 🎓 Trainee career tips\\n- ⚡ Code examples in any language\\n\\nWhat can I help you with today?`);
+  }}
+  if(novaOpen) setTimeout(()=>document.getElementById('nova-input').focus(), 200);
+}}
+
+function renderNovaMd(text){{
+  if(typeof marked !== 'undefined') return marked.parse(text||'');
+  return text.replace(/\\n/g,'<br>');
+}}
+
+function appendNovaMsg(role, text){{
+  const msgs = document.getElementById('nova-messages');
+  const div = document.createElement('div');
+  div.className = `nova-msg ${{role==='user'?'user':''}}`;
+  div.innerHTML = `
+    <div class="nova-msg-avatar">${{role==='user'?'👤':'🤖'}}</div>
+    <div class="nova-bubble">${{renderNovaMd(text)}}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}}
+
+function showNovaTyping(){{
+  const msgs = document.getElementById('nova-messages');
+  const div = document.createElement('div');
+  div.className = 'nova-msg';
+  div.id = 'nova-typing-indicator';
+  div.innerHTML = `<div class="nova-msg-avatar">🤖</div><div class="nova-bubble"><div class="nova-typing"><span></span><span></span><span></span></div></div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}}
+
+function hideNovaTyping(){{
+  const el = document.getElementById('nova-typing-indicator');
+  if(el) el.remove();
+}}
+
+async function novaSend(){{
+  const input = document.getElementById('nova-input');
+  const msg = input.value.trim();
+  if(!msg || novaTyping) return;
+  input.value = '';
+  input.style.height = 'auto';
+  appendNovaMsg('user', msg);
+  novaHistory.push({{role:'user', content:msg}});
+  novaTyping = true;
+  document.getElementById('nova-send').disabled = true;
+  showNovaTyping();
+  try{{
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {{
+      method: 'POST',
+      headers: {{'Content-Type':'application/json','Authorization':'Bearer '+NOVA_API_KEY}},
+      body: JSON.stringify({{
+        model: 'llama-3.3-70b-versatile',
+        messages: [{{role:'system',content:NOVA_SYSTEM}}, ...novaHistory.slice(-8)],
+        temperature: 0.5,
+        max_tokens: 600
+      }})
+    }});
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error?.message||'API error');
+    const reply = data.choices[0].message.content;
+    novaHistory.push({{role:'assistant', content:reply}});
+    hideNovaTyping();
+    appendNovaMsg('bot', reply);
+  }} catch(e) {{
+    hideNovaTyping();
+    appendNovaMsg('bot', `❌ Oops! ${{e.message}}`);
+  }}
+  novaTyping = false;
+  document.getElementById('nova-send').disabled = false;
+}}
+
+function novaQuick(text){{
+  document.getElementById('nova-input').value = text;
+  novaSend();
+}}
+
+function novaKeydown(e){{
+  if(e.key==='Enter' && !e.shiftKey){{ e.preventDefault(); novaSend(); }}
+}}
+
+function autoResize(el){{
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 100) + 'px';
+}}
+</script>
+""", unsafe_allow_html=True)
 
 # ── Header ───────────────────────────────────────────────────────────────────
 st.markdown("""
