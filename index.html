@@ -1,1 +1,1103 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CodeMentor AI — by Neelima Pasala</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#0a0e1a;color:#e2e8f0;min-height:100vh}
+a{color:#60a5fa}
+
+/* Layout */
+.app{display:flex;min-height:100vh}
+.sidebar{width:260px;min-width:260px;background:#0d1117;border-right:1px solid #2d3748;padding:1.2rem;display:flex;flex-direction:column;gap:1rem;position:sticky;top:0;height:100vh;overflow-y:auto}
+.main{flex:1;padding:1.5rem;overflow-y:auto;max-width:calc(100vw - 260px)}
+
+/* Sidebar */
+.sidebar-section{background:#1a1f2e;border:1px solid #2d3748;border-radius:8px;padding:1rem}
+.sidebar-title{font-family:'JetBrains Mono',monospace;font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#a78bfa;margin-bottom:0.7rem}
+.sidebar-section p{color:#94a3b8;font-size:0.82rem;line-height:1.6}
+.stat-row{display:flex;gap:0.6rem;margin-top:0.5rem}
+.stat-box{flex:1;background:#0d1117;border:1px solid #2d3748;border-radius:8px;padding:0.7rem;text-align:center}
+.stat-number{font-size:1.5rem;font-weight:600;color:#a78bfa;font-family:'JetBrains Mono',monospace}
+.stat-label{font-size:0.75rem;color:#64748b;margin-top:0.2rem}
+.sidebar-link{display:block;color:#94a3b8;font-size:0.82rem;text-decoration:none;padding:0.2rem 0;line-height:1.8}
+.sidebar-link:hover{color:#a78bfa}
+
+/* Header */
+.main-header{text-align:center;padding:2rem 1rem 1.5rem;background:linear-gradient(135deg,#1e2433 0%,#0f1117 100%);border-radius:16px;margin-bottom:1.5rem;border:1px solid #2d3748}
+.main-header h1{font-family:'JetBrains Mono',monospace;font-size:2rem;font-weight:600;background:linear-gradient(135deg,#a78bfa 0%,#60a5fa 60%,#4ade80 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-0.5px}
+.main-header .version{color:#64748b;font-size:0.82rem;margin:.3rem 0 0;font-family:'JetBrains Mono',monospace}
+.main-header .tagline{color:#94a3b8;font-size:0.9rem;margin:.5rem 0 0}
+.main-header .builder{color:#a78bfa;font-size:0.8rem;margin:.4rem 0 0;font-family:'JetBrains Mono',monospace}
+.badges{margin-top:.8rem}
+.badge{display:inline-block;background:#1e2433;border:1px solid #3b82f6;color:#60a5fa;padding:.2rem .7rem;border-radius:6px;font-size:.72rem;font-weight:600;margin:.2rem;font-family:'JetBrains Mono',monospace}
+
+/* API Key Banner */
+.api-banner{background:#1e2433;border:1px solid #f59e0b;border-radius:10px;padding:1rem 1.2rem;margin-bottom:1.2rem;display:flex;gap:1rem;align-items:center;flex-wrap:wrap}
+.api-banner input{flex:1;min-width:200px;background:#0d1117;border:1px solid #2d3748;border-radius:6px;padding:.5rem .8rem;color:#e2e8f0;font-family:'JetBrains Mono',monospace;font-size:.85rem;outline:none}
+.api-banner input:focus{border-color:#a78bfa}
+.api-banner label{color:#fbbf24;font-size:.85rem;font-weight:600;white-space:nowrap}
+
+/* Tabs */
+.tabs{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1.2rem}
+.tab-btn{background:#1e2433;border:1px solid #2d3748;border-radius:8px 8px 0 0;color:#94a3b8;font-family:'JetBrains Mono',monospace;font-size:.8rem;padding:.6rem 1rem;cursor:pointer;transition:all .2s}
+.tab-btn:hover{color:#e2e8f0;border-color:#4b5563}
+.tab-btn.active{background:linear-gradient(135deg,#a78bfa 0%,#7c3aed 100%);color:#fff;border-color:#a78bfa}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* Mode label */
+.mode-label{font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:#a78bfa;margin-bottom:.8rem;display:flex;align-items:center;gap:.5rem}
+.mode-label::before{content:'';width:8px;height:8px;background:#a78bfa;border-radius:50%;animation:pulse 2s infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+/* Form Elements */
+label.field-label{display:block;color:#94a3b8;font-size:.82rem;margin-bottom:.4rem;margin-top:.8rem}
+textarea,input[type=text],input[type=password],select{width:100%;background:#1e2433;border:1px solid #2d3748;border-radius:8px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:.9rem;padding:.6rem .8rem;outline:none;transition:border .2s}
+textarea{resize:vertical;min-height:100px}
+textarea:focus,input:focus,select:focus{border-color:#a78bfa;box-shadow:0 0 0 2px rgba(167,139,250,.1)}
+select option{background:#1e2433}
+.row{display:flex;gap:.8rem;flex-wrap:wrap}
+.row>*{flex:1;min-width:150px}
+.radio-group{display:flex;flex-wrap:wrap;gap:.5rem;margin:.5rem 0}
+.radio-btn{background:#1e2433;border:1px solid #2d3748;border-radius:6px;color:#94a3b8;padding:.4rem .9rem;font-size:.82rem;cursor:pointer;transition:all .2s}
+.radio-btn.selected,.radio-btn:hover{background:#2d3748;color:#e2e8f0;border-color:#4b5563}
+.radio-btn.selected{border-color:#a78bfa;color:#a78bfa}
+.checkbox-label{display:flex;align-items:center;gap:.5rem;color:#94a3b8;font-size:.88rem;cursor:pointer;margin:.4rem 0}
+.checkbox-label input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:#a78bfa}
+
+/* Buttons */
+.btn{background:linear-gradient(135deg,#a78bfa 0%,#7c3aed 100%);color:#fff;border:none;border-radius:8px;padding:.65rem 2rem;font-family:'JetBrains Mono',monospace;font-weight:600;font-size:.85rem;cursor:pointer;transition:all .2s;box-shadow:0 4px 12px rgba(167,139,250,.2);width:100%;margin-top:.8rem}
+.btn:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(167,139,250,.35)}
+.btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.btn-sm{width:auto;padding:.4rem 1rem;font-size:.78rem;margin-top:.5rem}
+.template-row{display:flex;flex-wrap:wrap;gap:.5rem;margin:.6rem 0}
+.template-btn{background:#1e2433;border:1px solid #3730a3;color:#c4b5fd;border-radius:6px;padding:.35rem .8rem;font-size:.78rem;cursor:pointer;font-family:'JetBrains Mono',monospace;transition:all .2s}
+.template-btn:hover{background:#2d2a6e;border-color:#818cf8}
+
+/* Result & Info boxes */
+.result-box{background:#0f1420;border:1px solid #2d3748;border-left:3px solid #a78bfa;border-radius:8px;padding:1.5rem;margin-top:1rem;font-size:.92rem;line-height:1.8;color:#cbd5e1}
+.result-box h1,.result-box h2,.result-box h3{color:#a78bfa;font-family:'JetBrains Mono',monospace;margin:.8rem 0 .4rem}
+.result-box code{background:#1e2433;border-radius:4px;padding:.15rem .4rem;font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#4ade80}
+.result-box pre{background:#1a1f2e;border:1px solid #2d3748;border-radius:8px;padding:1rem;overflow-x:auto;margin:.6rem 0}
+.result-box pre code{background:none;padding:0;color:#e2e8f0}
+.result-box table{width:100%;border-collapse:collapse;margin:.6rem 0}
+.result-box th{background:#1e2433;color:#a78bfa;padding:.5rem .8rem;text-align:left;border:1px solid #2d3748;font-size:.82rem}
+.result-box td{padding:.5rem .8rem;border:1px solid #2d3748;font-size:.85rem}
+.result-box strong{color:#e2e8f0}
+.result-box ul,.result-box ol{padding-left:1.4rem;margin:.4rem 0}
+.tip-box{background:linear-gradient(135deg,#1a2234,#1e2845);border:1px solid #1e3a5f;border-left:3px solid #60a5fa;border-radius:8px;padding:.9rem 1.2rem;margin-top:1rem;font-size:.85rem;color:#93c5fd}
+.warning-box{background:linear-gradient(135deg,#2d1f1a,#3d2518);border:1px solid #44403c;border-left:3px solid #f59e0b;border-radius:8px;padding:.9rem 1.2rem;margin-top:1rem;font-size:.85rem;color:#fbbf24}
+.success-box{background:linear-gradient(135deg,#1a2d1f,#1e3d28);border:1px solid #2d4a3d;border-left:3px solid #4ade80;border-radius:8px;padding:.9rem 1.2rem;margin-top:1rem;font-size:.85rem;color:#86efac}
+.error-box{background:linear-gradient(135deg,#2d1a1a,#3d1818);border:1px solid #7f1d1d;border-left:3px solid #f87171;border-radius:8px;padding:.9rem 1.2rem;margin-top:.8rem;font-size:.85rem;color:#fca5a5}
+
+/* Loading spinner */
+.spinner{display:none;align-items:center;gap:.8rem;margin-top:1rem;color:#a78bfa;font-size:.88rem}
+.spinner.show{display:flex}
+.spin{width:20px;height:20px;border:2px solid #2d3748;border-top-color:#a78bfa;border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Tabs inside result (deep analysis) */
+.inner-tabs{display:flex;flex-wrap:wrap;gap:.4rem;margin:1rem 0 .5rem}
+.inner-tab{background:#1e2433;border:1px solid #2d3748;border-radius:6px;color:#94a3b8;font-size:.78rem;padding:.4rem .8rem;cursor:pointer;font-family:'JetBrains Mono',monospace;transition:all .2s}
+.inner-tab.active{background:#a78bfa;color:#fff;border-color:#a78bfa}
+.inner-panel{display:none}
+.inner-panel.active{display:block}
+
+/* Need cards (trainee kit) */
+.need-card{background:linear-gradient(135deg,#1e2433,#1a1f2e);border:1px solid #3730a3;border-left:4px solid #a78bfa;border-radius:10px;padding:1.2rem 1.4rem;margin-bottom:1rem}
+.need-card h4{color:#c4b5fd;font-family:'JetBrains Mono',monospace;font-size:.92rem;margin-bottom:.4rem}
+.need-card p{color:#94a3b8;font-size:.86rem;line-height:1.6}
+.need-tag{display:inline-block;background:#3730a3;color:#c4b5fd;border-radius:4px;padding:.15rem .5rem;font-size:.7rem;font-family:'JetBrains Mono',monospace;margin-top:.5rem;font-weight:600}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+
+/* History */
+.history-item{background:#1a1f2e;border:1px solid #2d3748;border-radius:8px;padding:1rem;margin-bottom:.8rem}
+.history-meta{display:flex;gap:.8rem;align-items:center;margin-bottom:.5rem;flex-wrap:wrap}
+.history-mode{background:#2d3748;color:#a78bfa;border-radius:4px;padding:.15rem .5rem;font-size:.72rem;font-family:'JetBrains Mono',monospace;font-weight:600}
+.history-time{color:#64748b;font-size:.78rem}
+.history-input{color:#94a3b8;font-size:.82rem;margin:.3rem 0}
+
+/* Divider */
+.divider{border:none;border-top:1px solid #2d3748;margin:1.2rem 0}
+.section-desc{color:#94a3b8;font-size:.88rem;margin-bottom:1rem;line-height:1.6}
+
+/* Expander */
+.expander{border:1px solid #2d3748;border-radius:8px;margin:.6rem 0;overflow:hidden}
+.expander-header{background:#1a1f2e;padding:.7rem 1rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:#94a3b8;font-size:.85rem;transition:background .2s}
+.expander-header:hover{background:#1e2433}
+.expander-header span{font-size:.75rem}
+.expander-body{display:none;padding:1rem;background:#161b2a;border-top:1px solid #2d3748}
+.expander-body.open{display:block}
+
+/* Lang badge */
+.lang-badge{display:inline-block;background:#1e3a5f;color:#60a5fa;padding:.2rem .6rem;border-radius:4px;font-size:.75rem;font-family:'JetBrains Mono',monospace;font-weight:600;margin:.3rem 0}
+
+/* Footer */
+footer{text-align:center;color:#334155;font-size:.78rem;font-family:'JetBrains Mono',monospace;margin-top:2rem;padding-top:1rem;border-top:1px solid #1e2433}
+
+/* Responsive */
+@media(max-width:768px){
+  .app{flex-direction:column}
+  .sidebar{width:100%;height:auto;position:static;flex-direction:row;flex-wrap:wrap}
+  .main{max-width:100%;padding:1rem}
+  .two-col{grid-template-columns:1fr}
+  .main-header h1{font-size:1.5rem}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-section">
+    <div class="sidebar-title">🧠 CodeMentor AI</div>
+    <p style="color:#a78bfa;font-size:.82rem;font-family:'JetBrains Mono',monospace;">Built by Neelima Pasala</p>
+    <p style="margin-top:.3rem;font-size:.76rem;">Powered by LLaMA 3.3 70B via Groq</p>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-title">📊 Session Stats</div>
+    <div class="stat-row">
+      <div class="stat-box"><div class="stat-number" id="stat-count">0</div><div class="stat-label">Queries</div></div>
+      <div class="stat-box"><div class="stat-number" style="font-size:1rem;" id="stat-mode">—</div><div class="stat-label">Top Mode</div></div>
+    </div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-title">💻 Supported Languages</div>
+    <p style="font-size:.8rem;line-height:1.8;">Python, JavaScript, TypeScript, Java, C++, C#, Go, Rust, PHP, Ruby, Swift, Kotlin, Dart, SQL, Bash, R, Scala, Elixir, Haskell, HTML/CSS, YAML, JSON, XML and 30+ more...</p>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-title">🔗 Resources</div>
+    <a class="sidebar-link" href="https://www.conventionalcommits.org" target="_blank">• Conventional Commits</a>
+    <a class="sidebar-link" href="https://git-scm.com/book/en/v2" target="_blank">• Git Best Practices</a>
+    <a class="sidebar-link" href="https://docs.python.org/3/" target="_blank">• Python Docs</a>
+    <a class="sidebar-link" href="https://developer.mozilla.org" target="_blank">• MDN Web Docs</a>
+    <a class="sidebar-link" href="https://github.com/donnemartin/system-design-primer" target="_blank">• System Design Primer</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-title">🎯 Quick Jump</div>
+    <p style="font-size:.8rem;line-height:2;">
+      📖 Explain — Deep code analysis<br>
+      ⚡ Generate — AI code generation<br>
+      📝 Commit — Git messages<br>
+      ❓ Ask — Q&amp;A assistant<br>
+      📧 Email — Email drafts<br>
+      🔄 Compare — Code comparison<br>
+      🔧 Debug — Smart debugging<br>
+      🎓 Trainee Kit — Skills you need<br>
+      📜 History — Past sessions
+    </p>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+  <div id="key-status"></div>
+
+  <!-- Header -->
+  <div class="main-header">
+    <h1>🧠 CodeMentor AI</h1>
+    <p class="version">v4.0 — Universal Language + Code Generation Edition</p>
+    <p class="tagline">Your AI mentor for ALL programming languages — analyze, generate, debug, and learn</p>
+    <p class="builder">✦ Built by Neelima Pasala ✦</p>
+    <div class="badges">
+      <span class="badge">50+ Languages</span>
+      <span class="badge">AI Code Generation</span>
+      <span class="badge">Smart Debugging</span>
+      <span class="badge">Deep Analysis</span>
+      <span class="badge">Security Scanning</span>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('explain',this)">📖 Explain Code</button>
+    <button class="tab-btn" onclick="showTab('generate',this)">⚡ Generate Code</button>
+    <button class="tab-btn" onclick="showTab('commit',this)">📝 Commit Message</button>
+    <button class="tab-btn" onclick="showTab('ask',this)">❓ Ask Question</button>
+    <button class="tab-btn" onclick="showTab('email',this)">📧 Write Email</button>
+    <button class="tab-btn" onclick="showTab('compare',this)">🔄 Compare Code</button>
+    <button class="tab-btn" onclick="showTab('debug',this)">🔧 Debug Helper</button>
+    <button class="tab-btn" onclick="showTab('trainee',this)">🎓 Trainee Kit</button>
+    <button class="tab-btn" onclick="showTab('history',this)">📜 History</button>
+  </div>
+
+  <!-- TAB 1: EXPLAIN -->
+  <div id="tab-explain" class="tab-panel active">
+    <div class="mode-label">Mode: Deep Code Analysis — All Languages Supported</div>
+    <p class="section-desc">Comprehensive code understanding for 50+ programming languages — structure, patterns, security, and performance.</p>
+    <div class="row">
+      <div>
+        <label class="field-label">Input method</label>
+        <div class="radio-group">
+          <div class="radio-btn selected" onclick="selectRadio(this,'explain-input','paste')">Paste code</div>
+          <div class="radio-btn" onclick="selectRadio(this,'explain-input','upload')">Upload file</div>
+        </div>
+        <input type="hidden" id="explain-input" value="paste"/>
+      </div>
+      <div>
+        <label class="field-label">Analysis depth</label>
+        <select id="explain-depth">
+          <option value="quick">Quick Explain</option>
+          <option value="deep" selected>Deep Analysis</option>
+        </select>
+      </div>
+    </div>
+    <div id="explain-paste-area">
+      <label class="field-label">Paste your code here (any language)</label>
+      <textarea id="explain-code" rows="10" placeholder="// Your code in any language...&#10;function example() {&#10;    return 'Hello World';&#10;}"></textarea>
+      <div id="explain-lang-badge"></div>
+    </div>
+    <div id="explain-upload-area" style="display:none">
+      <label class="field-label">Upload any code file</label>
+      <input type="file" id="explain-file" style="color:#94a3b8;font-size:.85rem;padding:.4rem 0" onchange="loadFile('explain-file','explain-code','explain-lang-badge')"/>
+    </div>
+    <button class="btn" onclick="runExplain()">🔍 Analyze Code</button>
+    <div class="spinner" id="explain-spinner"><div class="spin"></div> Analyzing code...</div>
+    <div id="explain-result"></div>
+  </div>
+
+  <!-- TAB 2: GENERATE -->
+  <div id="tab-generate" class="tab-panel">
+    <div class="mode-label">Mode: AI Code Generation — Build Anything in Any Language</div>
+    <p class="section-desc">Describe what you want to build — get production-ready code with explanations and best practices.</p>
+    <div class="row">
+      <div>
+        <label class="field-label">Target language</label>
+        <select id="gen-lang">
+          <option>Python</option><option>JavaScript</option><option>TypeScript</option><option>Java</option>
+          <option>C++</option><option>C</option><option>C#</option><option>Go</option><option>Rust</option>
+          <option>PHP</option><option>Ruby</option><option>Swift</option><option>Kotlin</option><option>Dart</option>
+          <option>SQL</option><option>Bash/Shell</option><option>HTML/CSS</option><option>R</option>
+          <option>Scala</option><option>Elixir</option><option>Haskell</option>
+        </select>
+      </div>
+      <div>
+        <label class="field-label">Code style</label>
+        <select id="gen-style">
+          <option>Production-ready</option><option>Learning/Tutorial</option><option>Quick prototype</option>
+        </select>
+      </div>
+      <div style="display:flex;align-items:flex-end;padding-bottom:.2rem">
+        <label class="checkbox-label"><input type="checkbox" id="gen-tests"/> Include unit tests</label>
+      </div>
+    </div>
+    <label class="field-label">What do you want to create?</label>
+    <div class="radio-group" id="gen-type-group">
+      <div class="radio-btn selected" onclick="selectRadio(this,'gen-type','Function/Method')">Function/Method</div>
+      <div class="radio-btn" onclick="selectRadio(this,'gen-type','Class/Module')">Class/Module</div>
+      <div class="radio-btn" onclick="selectRadio(this,'gen-type','Complete Script/Program')">Complete Script</div>
+      <div class="radio-btn" onclick="selectRadio(this,'gen-type','Algorithm')">Algorithm</div>
+      <div class="radio-btn" onclick="selectRadio(this,'gen-type','API Endpoint')">API Endpoint</div>
+      <div class="radio-btn" onclick="selectRadio(this,'gen-type','Database Query')">Database Query</div>
+      <div class="radio-btn" onclick="selectRadio(this,'gen-type','Frontend Component')">Frontend Component</div>
+    </div>
+    <input type="hidden" id="gen-type" value="Function/Method"/>
+    <label class="field-label">Describe what you want to build</label>
+    <textarea id="gen-desc" rows="5" placeholder="Example: Create a REST API endpoint that accepts a user ID, fetches their data from PostgreSQL, and returns it as JSON with proper error handling"></textarea>
+    <div class="expander">
+      <div class="expander-header" onclick="toggleExpander(this)">➕ Add context for better code generation <span>▼</span></div>
+      <div class="expander-body">
+        <div class="row">
+          <div>
+            <label class="field-label">Frameworks/Libraries to use</label>
+            <input type="text" id="gen-frameworks" placeholder="e.g., React, Flask, Spring Boot"/>
+            <label class="field-label">Constraints/Requirements</label>
+            <input type="text" id="gen-constraints" placeholder="e.g., Must handle 1000+ requests/sec"/>
+          </div>
+          <div>
+            <label class="field-label">Use case/Context</label>
+            <input type="text" id="gen-usecase" placeholder="e.g., For a mobile banking app"/>
+            <label class="field-label">Integrate with existing code (optional)</label>
+            <textarea id="gen-existing" rows="3" placeholder="Paste relevant existing code here..."></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+    <label class="field-label">Quick templates:</label>
+    <div class="template-row">
+      <button class="template-btn" onclick="setTemplate('Create a user authentication system with login, registration, and JWT token generation')">🔐 Auth</button>
+      <button class="template-btn" onclick="setTemplate('Create a complete CRUD API with endpoints for Create, Read, Update, Delete operations')">📊 CRUD API</button>
+      <button class="template-btn" onclick="setTemplate('Create database models and queries for user management with proper relationships')">🗄️ Database</button>
+      <button class="template-btn" onclick="setTemplate('Implement an efficient sorting/searching algorithm with optimization and complexity analysis')">⚡ Algorithm</button>
+      <button class="template-btn" onclick="setTemplate('Create a reusable UI component with props, state management, and styling')">🎨 UI Component</button>
+    </div>
+    <button class="btn" onclick="runGenerate()">⚡ Generate Code</button>
+    <div class="spinner" id="generate-spinner"><div class="spin"></div> Generating code...</div>
+    <div id="generate-result"></div>
+  </div>
+
+  <!-- TAB 3: COMMIT -->
+  <div id="tab-commit" class="tab-panel">
+    <div class="mode-label">Mode: Smart Commit Messages</div>
+    <p class="section-desc">Generate conventional commit messages with multiple options.</p>
+    <label class="field-label">Describe your changes or paste git diff</label>
+    <textarea id="commit-changes" rows="7" placeholder="e.g.&#10;- Added user authentication with JWT&#10;- Fixed bug in payment processing&#10;&#10;OR paste output of: git diff"></textarea>
+    <div class="row">
+      <div>
+        <label class="field-label">Commit type hint</label>
+        <select id="commit-type">
+          <option>Auto-detect</option><option>feat</option><option>fix</option><option>docs</option>
+          <option>style</option><option>refactor</option><option>perf</option><option>test</option><option>chore</option>
+        </select>
+      </div>
+      <div style="display:flex;align-items:flex-end;padding-bottom:.2rem">
+        <label class="checkbox-label"><input type="checkbox" id="commit-body" checked/> Include detailed body</label>
+      </div>
+    </div>
+    <button class="btn" onclick="runCommit()">📝 Generate Commit Messages</button>
+    <div class="spinner" id="commit-spinner"><div class="spin"></div> Generating commit messages...</div>
+    <div id="commit-result"></div>
+  </div>
+
+  <!-- TAB 4: ASK -->
+  <div id="tab-ask" class="tab-panel">
+    <div class="mode-label">Mode: Smart Developer Q&A</div>
+    <p class="section-desc">Get detailed answers with examples, explanations, and follow-up support.</p>
+    <label class="field-label">Your question</label>
+    <input type="text" id="ask-question" placeholder="e.g., What's the difference between Promise.all and Promise.race?"/>
+    <div class="expander" style="margin-top:.8rem">
+      <div class="expander-header" onclick="toggleExpander(this)">➕ Add context (helps get better answers) <span>▼</span></div>
+      <div class="expander-body">
+        <div class="row">
+          <div>
+            <label class="checkbox-label"><input type="checkbox" id="ask-has-error" onchange="toggleSection('ask-error-section',this)"/> I have an error message</label>
+            <div id="ask-error-section" style="display:none">
+              <textarea id="ask-error-msg" rows="3" placeholder="Paste the error message..."></textarea>
+            </div>
+            <label class="checkbox-label" style="margin-top:.5rem"><input type="checkbox" id="ask-tried" onchange="toggleSection('ask-tried-section',this)"/> I tried something already</label>
+            <div id="ask-tried-section" style="display:none">
+              <textarea id="ask-what-tried" rows="3" placeholder="What you tried..."></textarea>
+            </div>
+          </div>
+          <div>
+            <label class="field-label">Tech stack / environment</label>
+            <input type="text" id="ask-tech" placeholder="e.g., React 18, Node.js, PostgreSQL"/>
+          </div>
+        </div>
+      </div>
+    </div>
+    <label class="field-label">Any other relevant context</label>
+    <textarea id="ask-context" rows="3" placeholder="Links, requirements, constraints..."></textarea>
+    <button class="btn" onclick="runAsk()">💬 Get Answer</button>
+    <div class="spinner" id="ask-spinner"><div class="spin"></div> Thinking through your question...</div>
+    <div id="ask-result"></div>
+  </div>
+
+  <!-- TAB 5: EMAIL -->
+  <div id="tab-email" class="tab-panel">
+    <div class="mode-label">Mode: Professional Email Writer</div>
+    <p class="section-desc">Draft work emails with templates, tone control, and instant generation.</p>
+    <div class="row">
+      <div>
+        <label class="field-label">Email template</label>
+        <select id="email-template" onchange="updateEmailTemplate()">
+          <option value="Custom">Custom</option>
+          <option value="Leave Request">Leave Request</option>
+          <option value="Task Status Update">Task Status Update</option>
+          <option value="Request Help/Clarification">Request Help/Clarification</option>
+          <option value="Meeting Follow-up">Meeting Follow-up</option>
+          <option value="Deadline Extension">Deadline Extension</option>
+          <option value="Bug Report">Bug Report</option>
+          <option value="Feature Proposal">Feature Proposal</option>
+          <option value="Thank You">Thank You</option>
+        </select>
+      </div>
+      <div style="display:flex;align-items:flex-end">
+        <p id="email-template-desc" style="color:#64748b;font-size:.82rem;padding-bottom:.3rem">Describe your own email</p>
+      </div>
+    </div>
+    <label class="field-label" id="email-situation-label">What's the email about?</label>
+    <input type="text" id="email-situation" placeholder="e.g., Asking to join a different project team"/>
+    <div class="row">
+      <div>
+        <label class="field-label">Recipient</label>
+        <select id="email-recipient">
+          <option>Manager</option><option>Senior Developer</option><option>Team</option>
+          <option>HR</option><option>Client</option><option>Colleague</option>
+        </select>
+      </div>
+      <div>
+        <label class="field-label">Tone</label>
+        <select id="email-tone">
+          <option>Friendly &amp; Professional</option><option>Formal</option><option>Urgent</option><option>Apologetic</option>
+        </select>
+      </div>
+    </div>
+    <label class="field-label">Additional details to include</label>
+    <textarea id="email-extra" rows="3" placeholder="Specific dates, names, requirements, context..."></textarea>
+    <button class="btn" onclick="runEmail()">📧 Draft Email</button>
+    <div class="spinner" id="email-spinner"><div class="spin"></div> Drafting your professional email...</div>
+    <div id="email-result"></div>
+  </div>
+
+  <!-- TAB 6: COMPARE -->
+  <div id="tab-compare" class="tab-panel">
+    <div class="mode-label">Mode: Code Comparison — All Languages</div>
+    <p class="section-desc">Compare two implementations in any language and understand which is better and why.</p>
+    <label class="field-label">Comparison type</label>
+    <div class="radio-group">
+      <div class="radio-btn selected" onclick="selectRadio(this,'compare-type','Different implementations')">Different implementations</div>
+      <div class="radio-btn" onclick="selectRadio(this,'compare-type','Before/After refactor')">Before/After refactor</div>
+      <div class="radio-btn" onclick="selectRadio(this,'compare-type','Your code vs. Best practice')">Your code vs. Best practice</div>
+    </div>
+    <input type="hidden" id="compare-type" value="Different implementations"/>
+    <div class="row">
+      <div>
+        <label class="field-label">Code A</label>
+        <textarea id="code-a" rows="10" placeholder="def solution_a():&#10;    # First approach..."></textarea>
+      </div>
+      <div>
+        <label class="field-label">Code B</label>
+        <textarea id="code-b" rows="10" placeholder="def solution_b():&#10;    # Second approach..."></textarea>
+      </div>
+    </div>
+    <label class="field-label">Focus areas</label>
+    <div class="radio-group" id="compare-focus-group" style="flex-wrap:wrap">
+      <div class="radio-btn selected" onclick="toggleFocus(this,'Performance')">Performance</div>
+      <div class="radio-btn selected" onclick="toggleFocus(this,'Readability')">Readability</div>
+      <div class="radio-btn" onclick="toggleFocus(this,'Maintainability')">Maintainability</div>
+      <div class="radio-btn" onclick="toggleFocus(this,'Security')">Security</div>
+      <div class="radio-btn" onclick="toggleFocus(this,'Best Practices')">Best Practices</div>
+    </div>
+    <button class="btn" onclick="runCompare()">🔄 Compare Code</button>
+    <div class="spinner" id="compare-spinner"><div class="spin"></div> Analyzing and comparing implementations...</div>
+    <div id="compare-result"></div>
+  </div>
+
+  <!-- TAB 7: DEBUG -->
+  <div id="tab-debug" class="tab-panel">
+    <div class="mode-label">Mode: Smart Debugging Assistant</div>
+    <p class="section-desc">Get intelligent debugging help — understand errors, find root causes, and get fix suggestions.</p>
+    <label class="field-label">What kind of help do you need?</label>
+    <div class="radio-group">
+      <div class="radio-btn selected" onclick="selectRadio(this,'debug-type','Error/Exception')">Error/Exception</div>
+      <div class="radio-btn" onclick="selectRadio(this,'debug-type','Bug/Unexpected behavior')">Bug/Unexpected behavior</div>
+      <div class="radio-btn" onclick="selectRadio(this,'debug-type','Performance issue')">Performance issue</div>
+      <div class="radio-btn" onclick="selectRadio(this,'debug-type','Logic error')">Logic error</div>
+    </div>
+    <input type="hidden" id="debug-type" value="Error/Exception"/>
+    <div class="row">
+      <div style="flex:2">
+        <label class="field-label">Error message or describe the issue</label>
+        <textarea id="debug-error" rows="6" placeholder="Paste the full error/stack trace OR describe what's going wrong..."></textarea>
+      </div>
+      <div>
+        <label class="field-label">Language / Framework</label>
+        <input type="text" id="debug-lang" placeholder="e.g., Python, React"/>
+        <label class="field-label" style="margin-top:.8rem">What were you trying to do?</label>
+        <textarea id="debug-intent" rows="3" placeholder="I was trying to..."></textarea>
+      </div>
+    </div>
+    <label class="field-label">Relevant code (optional)</label>
+    <textarea id="debug-code" rows="6" placeholder="Paste the code where the error occurs..."></textarea>
+    <button class="btn" onclick="runDebug()">🔧 Debug This Issue</button>
+    <div class="spinner" id="debug-spinner"><div class="spin"></div> Analyzing the issue...</div>
+    <div id="debug-result"></div>
+  </div>
+
+  <!-- TAB 8: TRAINEE KIT -->
+  <div id="tab-trainee" class="tab-panel">
+    <div class="mode-label">Mode: Trainee Skill Kit</div>
+    <div style="background:linear-gradient(135deg,#1e1b4b,#1a1f2e);border:1px solid #3730a3;border-radius:12px;padding:1.5rem;margin-bottom:1.5rem">
+      <p style="color:#c4b5fd;font-family:'JetBrains Mono',monospace;font-size:.85rem;margin:0 0 .5rem;font-weight:600">⚡ THE HONEST TRUTH</p>
+      <p style="color:#94a3b8;font-size:.9rem;line-height:1.7;margin:0">Training gives you syntax. The real job needs you to <strong style="color:#e2e8f0">think, communicate, debug under pressure, and work with people</strong>. Here's everything they forgot to teach you.</p>
+    </div>
+    <div class="two-col">
+      <div>
+        <div class="need-card"><h4>🔍 1. Debugging Mindset</h4><p>Reading a stack trace is a skill. Most trainees panic at errors — seniors use them as a map. Learn to read logs top-to-bottom, isolate the failing line, reproduce the bug in isolation.</p><span class="need-tag">TOP PRIORITY</span></div>
+        <div class="need-card"><h4>🌿 2. Git Beyond Basics</h4><p>You know <code style="background:#1e2433;padding:.1rem .3rem;border-radius:3px;font-size:.82rem">git commit</code>. But can you rebase without losing work? Resolve a merge conflict? Cherry-pick a fix? These happen daily in real teams.</p><span class="need-tag">DAILY USE</span></div>
+        <div class="need-card"><h4>💬 3. Asking Good Questions</h4><p>Never say "it's not working." Always bring: what you tried, the exact error, and what you expected vs what happened. This is the #1 skill that makes seniors want to help you.</p><span class="need-tag">CAREER CRITICAL</span></div>
+        <div class="need-card"><h4>📖 4. Reading Other People's Code</h4><p>Training writes code. Real work reads code. Practice reading open-source codebases, your team's old code — without running it. Build this muscle early.</p><span class="need-tag">OFTEN SKIPPED</span></div>
+        <div class="need-card"><h4>🗣️ 5. Communicating Blockers Early</h4><p>Don't stay stuck for 4 hours in silence. Raise blockers within 30 minutes. Being vocal about problems (with a clear description) is professionalism — not weakness.</p><span class="need-tag">TEAM SKILL</span></div>
+        <div class="need-card"><h4>🧪 6. Writing Tests (Even Basic Ones)</h4><p>A function with no test is a liability. Learn to write at least one unit test per function you build. It forces you to think about edge cases and saves hours of debugging.</p><span class="need-tag">UNDERVALUED</span></div>
+      </div>
+      <div>
+        <div class="need-card"><h4>🏗️ 7. System Thinking</h4><p>Can you explain how your feature affects the whole system? Database? Cache? Other services? Trainees think in functions. Seniors think in systems. Start asking "what else does this touch?"</p><span class="need-tag">LEVEL-UP SKILL</span></div>
+        <div class="need-card"><h4>📋 8. Writing Readable Code — Not Just Working Code</h4><p>Code is read 10x more than it's written. Name variables clearly, keep functions short, add comments for WHY not WHAT. Your code reviews will be smoother.</p><span class="need-tag">DAILY HABIT</span></div>
+        <div class="need-card"><h4>⏱️ 9. Estimating Tasks Honestly</h4><p>Never say "it'll take 10 minutes" when you don't know. Say "I'll check and tell you by lunch." Learn to break tasks down before estimating. Wrong estimates damage trust.</p><span class="need-tag">CAREER CRITICAL</span></div>
+        <div class="need-card"><h4>🛠️ 10. Environment & Tooling Comfort</h4><p>Know your terminal, IDE shortcuts, and how to set up a project from scratch. Trainees who can set up their own dev environment independently save hours for the whole team.</p><span class="need-tag">OFTEN SKIPPED</span></div>
+        <div class="need-card"><h4>📝 11. Writing PR Descriptions & Comments</h4><p>A pull request without context is noise. Write why you made the change, what you tested, and what reviewers should focus on. This habit alone will fast-track your promotions.</p><span class="need-tag">TEAM SKILL</span></div>
+        <div class="need-card"><h4>🧘 12. Handling Feedback Without Ego</h4><p>Code review feedback is about the code, not you. The trainees who grow fastest treat every comment as free mentorship. Say "thanks, I'll fix that."</p><span class="need-tag">MINDSET</span></div>
+      </div>
+    </div>
+    <hr class="divider"/>
+    <p style="color:#a78bfa;font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:600;margin-bottom:.6rem">🤖 ASK CODEMENTOR AI — Drill into any skill above</p>
+    <label class="field-label">Ask about any trainee skill — get a real, practical explanation</label>
+    <textarea id="trainee-question" rows="3" placeholder="e.g., How do I read a stack trace? / How do I resolve a merge conflict? / How do I estimate tasks better?"></textarea>
+    <button class="btn" onclick="runTrainee()">🎓 Get Trainee Advice</button>
+    <div class="spinner" id="trainee-spinner"><div class="spin"></div> Getting practical advice...</div>
+    <div id="trainee-result"></div>
+  </div>
+
+  <!-- TAB 9: HISTORY -->
+  <div id="tab-history" class="tab-panel">
+    <div class="mode-label">Mode: Session History</div>
+    <p class="section-desc">View your recent queries and analyses from this session.</p>
+    <div id="history-list"><p style="color:#64748b">No history yet. Start using CodeMentor AI to build your session history!</p></div>
+    <button class="btn" style="max-width:200px;margin-top:1rem" onclick="clearHistory()">🗑️ Clear History</button>
+  </div>
+
+  <footer>🧠 CodeMentor AI v4.0 — Built by <span style="color:#a78bfa">Neelima Pasala</span> &nbsp;|&nbsp; Powered by LLaMA 3.3 70B via Groq &nbsp;|&nbsp; Supports 50+ Programming Languages</footer>
+</main>
+</div>
+
+<script>
+// ── State ──────────────────────────────────────────────────────────────────
+let sessionHistory = [];
+let modeCounts = {};
+let queryCount = 0;
+let focusAreas = ['Performance','Readability'];
+
+// ── API Key (hardcoded for public deployment) ──────────────────────────────
+const GROQ_KEY = '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';
+function getKey(){return GROQ_KEY;}
+window.onload=()=>{};
+
+// ── Groq API ───────────────────────────────────────────────────────────────
+async function callGroq(system, user, maxTokens=1000){
+  const key=getKey();
+  if(!key){throw new Error('Please enter and save your Groq API key first.');}
+  const res=await fetch('https://api.groq.com/openai/v1/chat/completions',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+    body:JSON.stringify({
+      model:'llama-3.3-70b-versatile',
+      messages:[{role:'system',content:system},{role:'user',content:user}],
+      temperature:0.3,
+      max_tokens:maxTokens
+    })
+  });
+  if(!res.ok){
+    const err=await res.json().catch(()=>({}));
+    throw new Error(err.error?.message||'API request failed: '+res.status);
+  }
+  const data=await res.json();
+  return data.choices[0].message.content;
+}
+
+// ── UI Helpers ─────────────────────────────────────────────────────────────
+function showTab(name,btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');
+}
+function selectRadio(el,hiddenId,value){
+  const group=el.parentElement;
+  group.querySelectorAll('.radio-btn').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById(hiddenId).value=value;
+  if(hiddenId==='explain-input'){
+    document.getElementById('explain-paste-area').style.display=value==='paste'?'block':'none';
+    document.getElementById('explain-upload-area').style.display=value==='upload'?'block':'none';
+  }
+}
+function toggleExpander(header){
+  const body=header.nextElementSibling;
+  body.classList.toggle('open');
+  header.querySelector('span').textContent=body.classList.contains('open')?'▲':'▼';
+}
+function toggleSection(id,cb){
+  document.getElementById(id).style.display=cb.checked?'block':'none';
+}
+function setTemplate(text){document.getElementById('gen-desc').value=text;}
+function toggleFocus(el,area){
+  el.classList.toggle('selected');
+  if(el.classList.contains('selected')){if(!focusAreas.includes(area))focusAreas.push(area);}
+  else{focusAreas=focusAreas.filter(a=>a!==area);}
+}
+function spin(id,show){document.getElementById(id).classList[show?'add':'remove']('show');}
+function renderMd(text){return marked.parse(text||'');}
+function showResult(id,html){document.getElementById(id).innerHTML=html;}
+function errBox(msg){return `<div class="error-box">${msg}</div>`;}
+function resBox(html){return `<div class="result-box">${html}</div>`;}
+function loadFile(inputId,textareaId,badgeId){
+  const file=document.getElementById(inputId).files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    document.getElementById(textareaId).value=e.target.result;
+    const ext=file.name.split('.').pop().toLowerCase();
+    const langMap={'py':'Python','js':'JavaScript','ts':'TypeScript','java':'Java','cpp':'C++','c':'C','go':'Go','rs':'Rust','rb':'Ruby','php':'PHP','swift':'Swift','kt':'Kotlin','dart':'Dart','html':'HTML','css':'CSS','sql':'SQL','sh':'Bash','r':'R'};
+    const lang=langMap[ext]||ext.toUpperCase();
+    document.getElementById(badgeId).innerHTML=`<span class="lang-badge">Language: ${lang}</span>`;
+  };
+  reader.readAsText(file);
+}
+function detectLang(code){
+  if(code.includes('def ')||code.includes('import ')||code.includes('print('))return'Python';
+  if(code.includes('function')||code.includes('const ')||code.includes('=>'))return'JavaScript';
+  if(code.includes('public class')||code.includes('public static void main'))return'Java';
+  if(code.includes('#include'))return'C++';
+  if(code.includes('package main')||code.includes('func '))return'Go';
+  if(code.includes('fn ')||code.includes('let mut'))return'Rust';
+  return'code';
+}
+function addHistory(mode,input,output){
+  const now=new Date().toLocaleString();
+  sessionHistory.unshift({time:now,mode,input:input.substring(0,100)+(input.length>100?'...':''),output:output.substring(0,200)+(output.length>200?'...':'')});
+  if(sessionHistory.length>20)sessionHistory.pop();
+  queryCount++;
+  modeCounts[mode]=(modeCounts[mode]||0)+1;
+  updateStats();
+  updateHistoryTab();
+}
+function updateStats(){
+  document.getElementById('stat-count').textContent=queryCount;
+  let topMode='—';
+  let top=0;
+  for(const[m,c]of Object.entries(modeCounts)){if(c>top){top=c;topMode=m;}}
+  document.getElementById('stat-mode').textContent=topMode;
+}
+function updateHistoryTab(){
+  const el=document.getElementById('history-list');
+  if(!sessionHistory.length){el.innerHTML='<p style="color:#64748b">No history yet.</p>';return;}
+  el.innerHTML=sessionHistory.map(h=>`
+    <div class="history-item">
+      <div class="history-meta">
+        <span class="history-mode">${h.mode.toUpperCase()}</span>
+        <span class="history-time">${h.time}</span>
+      </div>
+      <div class="history-input">Input: ${h.input}</div>
+      <div style="color:#64748b;font-size:.8rem;margin-top:.3rem">Output preview: ${h.output}</div>
+    </div>`).join('');
+}
+function clearHistory(){
+  sessionHistory=[];modeCounts={};queryCount=0;
+  updateStats();updateHistoryTab();
+}
+function updateEmailTemplate(){
+  const t=document.getElementById('email-template').value;
+  const descs={
+    'Custom':'Describe your own email','Leave Request':'Request time off from work',
+    'Task Status Update':'Update team on task progress','Request Help/Clarification':'Ask for help or clarify requirements',
+    'Meeting Follow-up':'Follow up after a meeting','Deadline Extension':'Request more time on a task',
+    'Bug Report':'Report a bug to the team','Feature Proposal':'Propose a new feature or idea','Thank You':'Thank someone for their help'
+  };
+  document.getElementById('email-template-desc').textContent=descs[t]||'';
+  const label=document.getElementById('email-situation-label');
+  const input=document.getElementById('email-situation');
+  if(t==='Custom'){label.textContent="What's the email about?";input.placeholder="e.g., Asking to join a different project team";}
+  else{label.textContent=`Specific details for ${t.toLowerCase()}`;input.placeholder=`e.g., For leave: 'March 25-26 for family emergency'`;}
+}
+
+// ── TAB ACTIONS ─────────────────────────────────────────────────────────────
+
+async function runExplain(){
+  const code=document.getElementById('explain-code').value.trim();
+  const depth=document.getElementById('explain-depth').value;
+  if(!code){showResult('explain-result',errBox('Please provide some code first.'));return;}
+  const lang=detectLang(code);
+  const langCtx=`This is ${lang} code. `;
+  spin('explain-spinner',true);
+  showResult('explain-result','');
+  try{
+    if(depth==='deep'){
+      let html=`<div class="inner-tabs">
+        <div class="inner-tab active" onclick="showInner(this,'ov')">📋 Overview</div>
+        <div class="inner-tab" onclick="showInner(this,'dp')">🔍 Deep Dive</div>
+        <div class="inner-tab" onclick="showInner(this,'pt')">🎯 Patterns</div>
+        <div class="inner-tab" onclick="showInner(this,'sc')">🔒 Security & Performance</div>
+      </div>
+      <div id="inner-ov" class="inner-panel active"><div class="spin" style="display:inline-block;margin:1rem"></div></div>
+      <div id="inner-dp" class="inner-panel"></div>
+      <div id="inner-pt" class="inner-panel"></div>
+      <div id="inner-sc" class="inner-panel"></div>`;
+      showResult('explain-result',html);
+      spin('explain-spinner',false);
+      const [ov,dp,pt,sc]=await Promise.all([
+        callGroq(`${langCtx}You are a senior architect. Provide: 1. Purpose 2. Architecture/Structure 3. Tech stack 4. Entry points 5. Language-specific features. Use markdown.`,`Analyze:\n\n${code}`,600),
+        callGroq(`${langCtx}You are an expert code reviewer. For each function/class: 1. What it does 2. How it works 3. Input/output 4. Edge cases 5. Dependencies 6. Language idioms. Use code blocks.`,`Deep analysis:\n\n${code}`,1200),
+        callGroq(`${langCtx}You are a patterns expert. Identify: 1. Design patterns 2. Coding patterns 3. Language-specific patterns 4. Best practices ✅ 5. Anti-patterns ⚠️ 6. Improvements. Use tables.`,`Find patterns:\n\n${code}`,800),
+        callGroq(`${langCtx}You are a security & performance expert. Audit: 1. 🔒 Security Issues 2. ⚡ Performance Bottlenecks 3. 🐛 Potential Bugs. Rate each Critical/High/Medium/Low. Use tables.`,`Security audit:\n\n${code}`,1000)
+      ]);
+      document.getElementById('inner-ov').innerHTML=resBox(renderMd(ov));
+      document.getElementById('inner-dp').innerHTML=resBox(renderMd(dp));
+      document.getElementById('inner-pt').innerHTML=resBox(renderMd(pt));
+      document.getElementById('inner-sc').innerHTML=resBox(renderMd(sc));
+      addHistory('explain',code,ov);
+    } else {
+      const result=await callGroq(`${langCtx}You are a senior developer explaining to a junior trainee. Explain: 1. What it does 2. How it works step-by-step 3. Language-specific features 4. Key points 5. Learning opportunities. Use markdown.`,`Explain this code:\n\n${code}`,1000);
+      spin('explain-spinner',false);
+      showResult('explain-result',resBox(renderMd(result))+`<div class="tip-box">Want deeper insights? Switch to "Deep Analysis" mode above.</div>`);
+      addHistory('explain',code,result);
+    }
+  }catch(e){spin('explain-spinner',false);showResult('explain-result',errBox(e.message));}
+}
+
+function showInner(tab,id){
+  document.querySelectorAll('.inner-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.inner-panel').forEach(p=>p.classList.remove('active'));
+  tab.classList.add('active');
+  document.getElementById('inner-'+id).classList.add('active');
+}
+
+async function runGenerate(){
+  const desc=document.getElementById('gen-desc').value.trim();
+  const lang=document.getElementById('gen-lang').value;
+  const style=document.getElementById('gen-style').value;
+  const type=document.getElementById('gen-type').value;
+  const tests=document.getElementById('gen-tests').checked;
+  const frameworks=document.getElementById('gen-frameworks').value;
+  const constraints=document.getElementById('gen-constraints').value;
+  const usecase=document.getElementById('gen-usecase').value;
+  const existing=document.getElementById('gen-existing').value;
+  if(!desc){showResult('generate-result',errBox('Please describe what you want to build.'));return;}
+  spin('generate-spinner',true);showResult('generate-result','');
+  const styleMap={'Production-ready':'production-ready with error handling, validation, and documentation','Learning/Tutorial':'well-commented and tutorial-style for learning','Quick prototype':'concise prototype focused on core functionality'};
+  const ctx=[`Target language: ${lang}`,frameworks&&`Frameworks: ${frameworks}`,constraints&&`Constraints: ${constraints}`,usecase&&`Use case: ${usecase}`,existing&&`Integrate with:\n${existing}`].filter(Boolean).join('\n');
+  try{
+    const result=await callGroq(
+      `You are an expert software engineer. Generate ${styleMap[style]||style} code in ${lang} that solves requirements completely, follows ${lang} best practices, includes error handling. Provide: 1. Complete working code 2. Brief explanation 3. Usage example 4. Key features 5. Dependencies needed${tests?'\n6. Unit tests':''}. Use markdown with code blocks.`,
+      `Generate code for:\n${desc}\n\nContext:\n${ctx}\n\nType: ${type}\nStyle: ${style}`,
+      2000
+    );
+    spin('generate-spinner',false);
+    showResult('generate-result',resBox(renderMd(result))+`<div class="success-box">✅ Code generated successfully! Review, test, and customize as needed.</div>`);
+    addHistory('generate',desc,result);
+  }catch(e){spin('generate-spinner',false);showResult('generate-result',errBox(e.message));}
+}
+
+async function runCommit(){
+  const changes=document.getElementById('commit-changes').value.trim();
+  const type=document.getElementById('commit-type').value;
+  const body=document.getElementById('commit-body').checked;
+  if(!changes){showResult('commit-result',errBox('Describe your changes first.'));return;}
+  spin('commit-spinner',true);showResult('commit-result','');
+  const typeHint=type!=='Auto-detect'?`\nPreferred type: ${type}`:'';
+  const bodyHint=body?'\nInclude detailed body explaining what and why.':'\nKeep it concise.';
+  try{
+    const result=await callGroq(
+      `You are an expert at writing git commit messages following Conventional Commits format.\nFormat: <type>(scope): <description>\nTypes: feat, fix, docs, style, refactor, perf, test, chore\nRules: First line max 72 chars, use imperative mood, be specific${typeHint}${bodyHint}\n\nProvide exactly 3 options:\n### Option 1: Quick (one-liner)\n### Option 2: Standard (subject + body)\n### Option 3: Detailed (comprehensive)`,
+      `Write commit messages for:\n\n${changes}`,1000
+    );
+    spin('commit-spinner',false);
+    showResult('commit-result',resBox(renderMd(result))+`<div class="tip-box">Option 1 for quick fixes, Option 3 for major features.</div>`);
+    addHistory('commit',changes,result);
+  }catch(e){spin('commit-spinner',false);showResult('commit-result',errBox(e.message));}
+}
+
+async function runAsk(){
+  const q=document.getElementById('ask-question').value.trim();
+  if(!q){showResult('ask-result',errBox('Please type your question first.'));return;}
+  spin('ask-spinner',true);showResult('ask-result','');
+  const hasError=document.getElementById('ask-has-error').checked;
+  const tried=document.getElementById('ask-tried').checked;
+  const tech=document.getElementById('ask-tech').value;
+  const ctx=document.getElementById('ask-context').value;
+  let full=q;
+  const parts=[];
+  if(hasError){const e=document.getElementById('ask-error-msg').value;if(e)parts.push(`**Error:** ${e}`);}
+  if(tried){const t=document.getElementById('ask-what-tried').value;if(t)parts.push(`**Tried:** ${t}`);}
+  if(tech)parts.push(`**Tech:** ${tech}`);
+  if(ctx)parts.push(ctx);
+  if(parts.length)full+='\n\n**Context:**\n'+parts.join('\n');
+  try{
+    const result=await callGroq(
+      `You are a helpful senior developer with 10+ years experience. Structure your answer:\n1. **Direct Answer** (2-3 sentences)\n2. **Example** (working code snippet if relevant)\n3. **Why It Works** (underlying concept)\n4. **Common Mistakes** (what beginners get wrong)\n5. **Next Steps**\n\nBe practical and encouraging. Use markdown with code blocks.`,
+      full,1500
+    );
+    spin('ask-spinner',false);
+    showResult('ask-result',resBox(renderMd(result))+`<div class="tip-box">You now have clear context to ask your senior effectively if still stuck!</div>`);
+    addHistory('ask',q,result);
+  }catch(e){spin('ask-spinner',false);showResult('ask-result',errBox(e.message));}
+}
+
+async function runEmail(){
+  const template=document.getElementById('email-template').value;
+  const situation=document.getElementById('email-situation').value.trim();
+  const recipient=document.getElementById('email-recipient').value;
+  const tone=document.getElementById('email-tone').value;
+  const extra=document.getElementById('email-extra').value;
+  const fullSituation=template!=='Custom'?`${template}: ${situation}`:situation;
+  if(!situation){showResult('email-result',errBox('Please describe what the email is about.'));return;}
+  spin('email-spinner',true);showResult('email-result','');
+  const prompt=`**Email type:** ${fullSituation}\n**Recipient:** ${recipient}\n**Tone:** ${tone}${extra?`\n**Additional details:** ${extra}`:''}`;
+  try{
+    const result=await callGroq(
+      `You are an expert at writing professional workplace emails for software teams. Write a complete, ready-to-send email with:\n- **Subject:** Clear and specific\n- **Greeting:** Appropriate for recipient\n- **Opening:** Context in 1 sentence\n- **Body:** Main message (clear, concise, actionable)\n- **Closing:** Next steps or call to action\n- **Sign-off:** Professional closing\n\nRules: Keep body under 150 words, be respectful, no filler phrases, match tone exactly. Use [Your Name] as placeholder.`,
+      prompt,700
+    );
+    spin('email-spinner',false);
+    showResult('email-result',resBox(renderMd(result))+`<div class="tip-box">Before sending: Replace [Your Name] with your actual name • Read once and adjust to your style • Check for typos</div>`);
+    addHistory('email',fullSituation,result);
+  }catch(e){spin('email-spinner',false);showResult('email-result',errBox(e.message));}
+}
+
+async function runCompare(){
+  const codeA=document.getElementById('code-a').value.trim();
+  const codeB=document.getElementById('code-b').value.trim();
+  const type=document.getElementById('compare-type').value;
+  if(!codeA||!codeB){showResult('compare-result',errBox('Please provide both code snippets.'));return;}
+  spin('compare-spinner',true);showResult('compare-result','');
+  const focus=focusAreas.length?focusAreas.join(', '):'all aspects';
+  const langA=detectLang(codeA);const langB=detectLang(codeB);
+  const langCtx=langA===langB?`Both snippets are in ${langA}. `:`Code A is in ${langA}, Code B is in ${langB}. `;
+  try{
+    const result=await callGroq(
+      `${langCtx}You are an expert code reviewer comparing two implementations.\nFocus on: ${focus}\nComparison type: ${type}\n\n### 1. Functional Differences\n### 2. Code Quality (Readability, Maintainability, Best Practices)\n### 3. Performance Analysis (Time & Space Complexity)\n### 4. Security & Robustness\n### 5. Language-specific considerations\n### 6. Final Recommendation — ✅ Winner and 🔧 Improvements\n\nUse tables, code blocks, and clear formatting.`,
+      `Compare:\n\n**Code A:**\n\`\`\`\n${codeA}\n\`\`\`\n\n**Code B:**\n\`\`\`\n${codeB}\n\`\`\``,
+      1800
+    );
+    spin('compare-spinner',false);
+    showResult('compare-result',resBox(renderMd(result)));
+    addHistory('compare','code comparison',result);
+  }catch(e){spin('compare-spinner',false);showResult('compare-result',errBox(e.message));}
+}
+
+async function runDebug(){
+  const error=document.getElementById('debug-error').value.trim();
+  const type=document.getElementById('debug-type').value;
+  const lang=document.getElementById('debug-lang').value;
+  const intent=document.getElementById('debug-intent').value;
+  const code=document.getElementById('debug-code').value;
+  if(!error){showResult('debug-result',errBox('Please describe the error or issue.'));return;}
+  spin('debug-spinner',true);showResult('debug-result','');
+  const ctx=[lang&&`Language: ${lang}`,intent&&`Intent: ${intent}`,code&&`Code:\n${code}`].filter(Boolean).join('\n');
+  try{
+    const result=await callGroq(
+      `You are an expert debugger. Analyze the ${type} and provide:\n\n### 1. 🔍 Root Cause Analysis\n- Most likely cause\n- Why this error happens\n\n### 2. 🔬 Step-by-Step Diagnosis\n- How to verify this is the problem\n- How to reproduce it reliably\n\n### 3. ✅ Solution & Fix\n- Exact code fix (with explanation)\n- Alternative solutions if applicable\n\n### 4. 🛡️ Prevention\n- How to avoid this in the future\n- Testing strategy\n\n### 5. 📚 Learning Point\n- What concept caused confusion?\n\nBe specific, practical, and educational. Use code blocks.`,
+      `${ctx}\n\nError/Issue:\n${error}`,
+      2000
+    );
+    spin('debug-spinner',false);
+    showResult('debug-result',resBox(renderMd(result))+`<div class="success-box">💡 Still stuck? Add console.log/print statements to trace execution • Use a debugger to step through • Search Stack Overflow for the exact error message</div>`);
+    addHistory('debug',error,result);
+  }catch(e){spin('debug-spinner',false);showResult('debug-result',errBox(e.message));}
+}
+
+async function runTrainee(){
+  const q=document.getElementById('trainee-question').value.trim();
+  if(!q){showResult('trainee-result',errBox('Please ask a question.'));return;}
+  spin('trainee-spinner',true);showResult('trainee-result','');
+  try{
+    const result=await callGroq(
+      `You are a senior software engineer mentoring a brand-new trainee (0-1 year of experience).\n\nAnswer with:\n1. **What it actually is** (in simple terms)\n2. **Why it matters** in real team settings\n3. **Step-by-step: how to do it** (with examples, commands, or code)\n4. **Common trainee mistakes** to avoid\n5. **One daily habit** to build this skill\n\nBe warm, encouraging, specific. Use code blocks and markdown.`,
+      q,1500
+    );
+    spin('trainee-spinner',false);
+    showResult('trainee-result',resBox(renderMd(result)));
+    addHistory('trainee',q,result);
+  }catch(e){spin('trainee-spinner',false);showResult('trainee-result',errBox(e.message));}
+}
+
+</script>
+
+<!-- ── NOVA FLOATING BOT ─────────────────────────────────────────────────── -->
+<style>
+/* Floating button */
+#nova-fab{position:fixed;bottom:28px;right:28px;z-index:9999;width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#a78bfa,#7c3aed);border:none;cursor:pointer;box-shadow:0 4px 24px rgba(167,139,250,.5);display:flex;align-items:center;justify-content:center;transition:transform .2s,box-shadow .2s}
+#nova-fab:hover{transform:scale(1.1);box-shadow:0 6px 32px rgba(167,139,250,.7)}
+#nova-fab .fab-icon{font-size:1.6rem;line-height:1}
+#nova-pulse{position:absolute;top:-3px;right:-3px;width:16px;height:16px;background:#4ade80;border-radius:50%;border:2px solid #0a0e1a;animation:novapulse 2s infinite}
+@keyframes novapulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.3);opacity:.7}}
+
+/* Chat window */
+#nova-window{position:fixed;bottom:100px;right:28px;z-index:9998;width:360px;max-width:calc(100vw - 40px);background:#0d1117;border:1px solid #2d3748;border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,.6);display:none;flex-direction:column;overflow:hidden;animation:novafade .2s ease}
+#nova-window.open{display:flex}
+@keyframes novafade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* Header */
+#nova-header{background:linear-gradient(135deg,#1e2433,#161b2a);padding:.9rem 1rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #2d3748}
+.nova-title{display:flex;align-items:center;gap:.6rem}
+.nova-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#a78bfa,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.nova-name{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:.92rem;color:#e2e8f0}
+.nova-status{font-size:.72rem;color:#4ade80;margin-top:.1rem}
+#nova-close{background:none;border:none;color:#64748b;font-size:1.2rem;cursor:pointer;padding:.2rem .4rem;border-radius:4px;line-height:1}
+#nova-close:hover{color:#e2e8f0;background:#1e2433}
+
+/* Messages */
+#nova-messages{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.8rem;max-height:380px;min-height:200px}
+#nova-messages::-webkit-scrollbar{width:4px}
+#nova-messages::-webkit-scrollbar-track{background:transparent}
+#nova-messages::-webkit-scrollbar-thumb{background:#2d3748;border-radius:2px}
+.nova-msg{display:flex;gap:.6rem;align-items:flex-start}
+.nova-msg.user{flex-direction:row-reverse}
+.nova-msg-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#a78bfa,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0}
+.nova-msg.user .nova-msg-avatar{background:linear-gradient(135deg,#3b82f6,#1d4ed8)}
+.nova-bubble{max-width:78%;background:#1a1f2e;border:1px solid #2d3748;border-radius:12px;padding:.6rem .9rem;font-size:.84rem;line-height:1.6;color:#cbd5e1}
+.nova-msg.user .nova-bubble{background:#1e2d4a;border-color:#1e3a5f;color:#e2e8f0}
+.nova-bubble code{background:#0d1117;border-radius:3px;padding:.1rem .3rem;font-family:'JetBrains Mono',monospace;font-size:.8rem;color:#4ade80}
+.nova-bubble pre{background:#0d1117;border-radius:6px;padding:.6rem;overflow-x:auto;margin:.4rem 0}
+.nova-bubble pre code{background:none;padding:0;color:#e2e8f0}
+.nova-bubble strong{color:#e2e8f0}
+.nova-bubble p{margin:.3rem 0}
+.nova-bubble ul,.nova-bubble ol{padding-left:1.2rem;margin:.3rem 0}
+.nova-typing{display:flex;align-items:center;gap:4px;padding:.4rem .6rem}
+.nova-typing span{width:6px;height:6px;background:#a78bfa;border-radius:50%;animation:novatype 1.2s infinite}
+.nova-typing span:nth-child(2){animation-delay:.2s}
+.nova-typing span:nth-child(3){animation-delay:.4s}
+@keyframes novatype{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-5px);opacity:1}}
+
+/* Quick chips */
+#nova-chips{padding:.5rem 1rem;display:flex;flex-wrap:wrap;gap:.4rem;border-top:1px solid #1e2433}
+.nova-chip{background:#1a1f2e;border:1px solid #2d3748;color:#94a3b8;border-radius:20px;padding:.25rem .7rem;font-size:.73rem;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:'JetBrains Mono',monospace}
+.nova-chip:hover{background:#2d3748;color:#a78bfa;border-color:#a78bfa}
+
+/* Input */
+#nova-input-row{padding:.7rem 1rem;border-top:1px solid #2d3748;display:flex;gap:.5rem;align-items:flex-end}
+#nova-input{flex:1;background:#1e2433;border:1px solid #2d3748;border-radius:8px;color:#e2e8f0;font-size:.85rem;padding:.5rem .8rem;outline:none;resize:none;max-height:100px;font-family:'Inter',sans-serif;line-height:1.5}
+#nova-input:focus{border-color:#a78bfa}
+#nova-send{width:36px;height:36px;background:linear-gradient(135deg,#a78bfa,#7c3aed);border:none;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;transition:all .2s}
+#nova-send:hover{transform:scale(1.05)}
+#nova-send:disabled{opacity:.5;cursor:not-allowed;transform:none}
+</style>
+
+<!-- Floating button -->
+<button id="nova-fab" onclick="toggleNova()" title="Chat with Nova">
+  <span class="fab-icon">🤖</span>
+  <span id="nova-pulse"></span>
+</button>
+
+<!-- Chat window -->
+<div id="nova-window">
+  <div id="nova-header">
+    <div class="nova-title">
+      <div class="nova-avatar">🤖</div>
+      <div>
+        <div class="nova-name">Nova</div>
+        <div class="nova-status">● Online — CodeMentor AI Assistant</div>
+      </div>
+    </div>
+    <button id="nova-close" onclick="toggleNova()">✕</button>
+  </div>
+  <div id="nova-messages"></div>
+  <div id="nova-chips">
+    <div class="nova-chip" onclick="novaQuick('What can you help me with?')">What can you do?</div>
+    <div class="nova-chip" onclick="novaQuick('How do I write a good commit message?')">Commit tips</div>
+    <div class="nova-chip" onclick="novaQuick('What are common beginner coding mistakes?')">Beginner tips</div>
+    <div class="nova-chip" onclick="novaQuick('Explain what an API is in simple terms')">What is an API?</div>
+  </div>
+  <div id="nova-input-row">
+    <textarea id="nova-input" rows="1" placeholder="Ask Nova anything..." onkeydown="novaKeydown(event)" oninput="autoResize(this)"></textarea>
+    <button id="nova-send" onclick="novaSend()">➤</button>
+  </div>
+</div>
+
+<script>
+// ── NOVA BOT ───────────────────────────────────────────────────────────────
+let novaOpen = false;
+let novaHistory = [];
+let novaTyping = false;
+
+const NOVA_SYSTEM = `You are Nova, a friendly and expert AI coding assistant embedded inside CodeMentor AI, a tool built by Neelima Pasala.
+
+You help developers and trainees with:
+- Coding questions in any language (Python, JavaScript, Java, etc.)
+- Debugging help and error explanations
+- Git and version control tips
+- Career advice for software trainees
+- Explaining concepts simply
+- Best practices and code review tips
+- Anything related to software development
+
+Personality: Warm, encouraging, practical. You use emojis occasionally. You give concise but complete answers. You use code blocks for code examples.
+
+Important: You are Nova, NOT Claude or any other AI. Always refer to yourself as Nova. Keep responses concise (under 200 words unless code is needed). Use markdown formatting.`;
+
+function toggleNova(){
+  novaOpen=!novaOpen;
+  const w=document.getElementById('nova-window');
+  if(novaOpen){
+    w.classList.add('open');
+    if(novaHistory.length===0) novaGreet();
+    setTimeout(()=>document.getElementById('nova-input').focus(),200);
+  } else {
+    w.classList.remove('open');
+  }
+}
+
+function novaGreet(){
+  appendNovaMsg('bot',`👋 Hey there! I'm **Nova**, your coding companion inside CodeMentor AI!\n\nI can help you with:\n- 🐛 Debugging errors\n- 💡 Explaining concepts\n- 🌿 Git & version control\n- 🎓 Trainee career tips\n- ⚡ Code examples in any language\n\nWhat can I help you with today?`);
+}
+
+function appendNovaMsg(role, text){
+  const msgs=document.getElementById('nova-messages');
+  const div=document.createElement('div');
+  div.className=`nova-msg ${role==='user'?'user':''}`;
+  div.innerHTML=`
+    <div class="nova-msg-avatar">${role==='user'?'👤':'🤖'}</div>
+    <div class="nova-bubble">${renderMd(text)}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+function showNovaTyping(){
+  const msgs=document.getElementById('nova-messages');
+  const div=document.createElement('div');
+  div.className='nova-msg';
+  div.id='nova-typing-indicator';
+  div.innerHTML=`<div class="nova-msg-avatar">🤖</div><div class="nova-bubble"><div class="nova-typing"><span></span><span></span><span></span></div></div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+function hideNovaTyping(){
+  const el=document.getElementById('nova-typing-indicator');
+  if(el)el.remove();
+}
+
+async function novaSend(){
+  const input=document.getElementById('nova-input');
+  const msg=input.value.trim();
+  if(!msg||novaTyping)return;
+  input.value='';
+  input.style.height='auto';
+  appendNovaMsg('user',msg);
+  novaHistory.push({role:'user',content:msg});
+  novaTyping=true;
+  document.getElementById('nova-send').disabled=true;
+  showNovaTyping();
+  try{
+    const messages=[{role:'user',content:NOVA_SYSTEM+'\n\n---\n\nConversation so far:\n'+novaHistory.slice(-8).map(m=>`${m.role}: ${m.content}`).join('\n')+'\n\nassistant:'}];
+    const res=await fetch('https://api.groq.com/openai/v1/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+getKey()},
+      body:JSON.stringify({
+        model:'llama-3.3-70b-versatile',
+        messages:[
+          {role:'system',content:NOVA_SYSTEM},
+          ...novaHistory.slice(-8)
+        ],
+        temperature:0.5,
+        max_tokens:600
+      })
+    });
+    const data=await res.json();
+    if(!res.ok)throw new Error(data.error?.message||'API error');
+    const reply=data.choices[0].message.content;
+    novaHistory.push({role:'assistant',content:reply});
+    hideNovaTyping();
+    appendNovaMsg('bot',reply);
+  }catch(e){
+    hideNovaTyping();
+    appendNovaMsg('bot',`❌ Oops! ${e.message}`);
+  }
+  novaTyping=false;
+  document.getElementById('nova-send').disabled=false;
+}
+
+function novaQuick(text){
+  document.getElementById('nova-input').value=text;
+  novaSend();
+}
+
+function novaKeydown(e){
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();novaSend();}
+}
+
+function autoResize(el){
+  el.style.height='auto';
+  el.style.height=Math.min(el.scrollHeight,100)+'px';
+}
+</script>
+</body>
+</html>
