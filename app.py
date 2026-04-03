@@ -7,7 +7,7 @@ import json
 
 # ── Load API key (tries .env first, then lets user paste it in sidebar) ───────
 load_dotenv()
-GROQ_API_KEY = os.getenv("GROQ_API_KEY", "").strip()
+GROQ_API_KEY = os.getenv("GROQ_API_KEY", "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").strip()
 
 # If not in .env, let user enter it in sidebar
 if not GROQ_API_KEY:
